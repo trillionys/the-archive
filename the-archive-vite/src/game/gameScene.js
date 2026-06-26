@@ -1,7 +1,14 @@
+import { loadRooms } from "../engine/roomEngine.js";
+import { theWorldRooms } from "../worlds/theWorld/rooms.js";
+import { applyTheme } from "../ui/theme.js";
+
 export function startGameScene(result, elements) {
   const { tarotScreen, gameScreen, title, text, log } = elements;
   const card = result.card;
   const data = result.data;
+
+  applyTheme(card.theme);
+  loadRooms(theWorldRooms);
 
   tarotScreen.style.display = "none";
   gameScreen.style.display = "block";

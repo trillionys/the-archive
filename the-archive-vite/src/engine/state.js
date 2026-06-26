@@ -5,4 +5,6 @@ export const gameState = {
   commandCount: 0,
   unknownWords: [],
   inventory: [],
+  currentRoomId: "archiveHall",
+  rooms: {},
 };

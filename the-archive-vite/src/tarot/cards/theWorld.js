@@ -1,6 +1,13 @@
 export const theWorld = {
   id: "the-world",
   name: "The World",
+  
+  theme: {
+  background: "#080b1f",
+  panel: "#0b1028",
+  text: "#ead9b7",
+  accent: "#d8b66d",
+  },
 
   upright: {
     title: "완성된 세계",

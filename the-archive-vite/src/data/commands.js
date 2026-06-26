@@ -1,3 +1,4 @@
+import { getCurrentRoom, moveTo } from "../engine/roomEngine.js";
 import { gameState } from "../engine/state.js";
 import { print } from "../engine/printer.js";
 
@@ -23,8 +24,13 @@ export const commands = {
   },
 
   look() {
-    print("주변을 살핀다. 벽에는 오래된 문장이 새겨져 있다.");
-    print('"기록은 사라지지 않는다. 다만 주인을 바꿀 뿐."');
+  const room = getCurrentRoom();
+
+  print(`[${room.name}]`);
+  print(room.description);
+
+  const exits = Object.keys(room.exits).join(", ");
+  print(`이동 가능: ${exits}`);
   },
 
   open() {
@@ -42,5 +48,21 @@ export const commands = {
     print(`FEAR: ${gameState.fear}`);
     print(`KNOWLEDGE: ${gameState.knowledge}`);
     print(`COMMANDS: ${gameState.commandCount}`);
+  },
+
+  go(parsed) {
+  const direction = parsed.object;
+  const result = moveTo(direction);
+
+  if (!result.success) {
+    print(result.message);
+    return;
+  }
+
+  print(`[${result.room.name}]`);
+  print(result.room.description);
+
+  const exits = Object.keys(result.room.exits).join(", ");
+  print(`이동 가능: ${exits}`);
   },
 };
