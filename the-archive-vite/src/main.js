@@ -1,4 +1,5 @@
 import "./style.css";
+import { initTarotScene } from "./tarot/tarotScene.js";
 import { startGameScene } from "./game/gameScene.js";
 import { drawTarotCard } from "./tarot/tarotEngine.js";
 import { createSeedEngine } from "./engine/seedEngine.js";
@@ -52,30 +53,14 @@ function makeSeed() {
   return Math.floor(100000 + Math.random() * 900000);
 }
 
-drawBtn.addEventListener("click", () => {
-  drawBtn.disabled = true;
-
-  const result = drawTarotCard();
-
-  selectedCard.querySelector("h2").textContent = result.card.name.toUpperCase();
-  selectedCard.querySelector(".card-front p:last-child").textContent =
-    result.data.orientationText;
-
-  selectedCard.classList.remove("hidden");
-
-  setTimeout(() => {
-    selectedCard.classList.add("revealed");
-  }, 700);
-
-  setTimeout(() => {
-    startGameScene(result, {
+initTarotScene({
   tarotScreen,
   gameScreen,
+  drawBtn,
+  selectedCard,
   title,
   text,
   log,
-    });
-  }, 2200);
 });
 
 
