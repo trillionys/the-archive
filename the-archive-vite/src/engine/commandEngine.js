@@ -1,11 +1,13 @@
+import { parseCommand } from "./parser.js";
 import { gameState } from "./state.js";
 import { print } from "./printer.js";
 import { commands } from "../data/commands.js";
 
 export function handleCommand(command) {
-  const cleanCommand = command.trim().toLowerCase();
-
-  console.log("command keys:", Object.keys(commands));
+  const parsed = parseCommand(command);
+  console.log(parsed);
+  
+  const cleanCommand = parsed.verb;
 
   if (cleanCommand === "") return;
 
@@ -13,7 +15,7 @@ export function handleCommand(command) {
   gameState.commandCount++;
 
   if (commands[cleanCommand]) {
-    commands[cleanCommand]();
+    commands[cleanCommand](parsed);
   } else {
     gameState.unknownWords.push(cleanCommand);
     gameState.fear += 1;

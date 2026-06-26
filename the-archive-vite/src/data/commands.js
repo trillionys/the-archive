@@ -2,11 +2,15 @@ import { gameState } from "../engine/state.js";
 import { print } from "../engine/printer.js";
 
 export const commands = {
-  take() {
-  gameState.inventory.push("flashlight");
+  take(parsed) {
+  if (parsed.object !== "flashlight") {
+    print(`${parsed.object}은(는) 가져갈 수 없다.`);
+    return;
+  }
 
+  gameState.inventory.push("flashlight");
   print("손전등을 획득했다.");
-  },
+},
 
   help() {
   print("사용 가능한 명령어:");
