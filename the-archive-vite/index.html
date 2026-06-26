@@ -4,21 +4,39 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>The Archive</title>
-  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <main id="app">
-    <section id="screen">
+    <section id="tarotScreen">
+      <p class="small">THE ARCHIVE</p>
+      <h1>Draw Your Archive</h1>
+      <p class="subtitle">156개의 가능성 중 하나가 세계를 연다.</p>
+
+      <button id="drawBtn">DRAW CARD</button>
+
+      <div id="selectedCard" class="selected-card hidden">
+        <div class="card-inner">
+          <div class="card-back"></div>
+          <div class="card-front">
+            <p class="card-number">XXI</p>
+            <h2>THE WORLD</h2>
+            <p>정방향</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="gameScreen" class="hidden">
       <p class="small">ARCHIVE NODE</p>
       <h1 id="title">접속 대기 중...</h1>
-      <p id="text">시스템을 초기화하려면 아래 버튼을 누르세요.</p>
-      <button id="startBtn">ENTER</button>
+      <p id="text">시스템을 초기화하는 중...</p>
 
-      <div id="log" class="hidden"></div>
-      <div id="commandArea" class="hidden">
-  <input id="commandInput" placeholder="명령어 입력..." autocomplete="off" />
-  <button id="commandBtn">SEND</button>
-</div>
+      <div id="log"></div>
+
+      <div id="commandArea">
+        <input id="commandInput" placeholder="명령어 입력..." autocomplete="off" />
+        <button id="commandBtn">SEND</button>
+      </div>
     </section>
   </main>
 

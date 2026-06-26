@@ -1,7 +1,14 @@
 import "./style.css";
+import { drawTarotCard } from "./tarot/tarotEngine.js";
 import { createSeedEngine } from "./engine/seedEngine.js";
 import { initPrinter } from "./engine/printer.js";
 import { handleCommand } from "./engine/commandEngine.js";
+
+const tarotScreen = document.getElementById("tarotScreen");
+const gameScreen = document.getElementById("gameScreen");
+const drawBtn = document.getElementById("drawBtn");
+const cardSpread = document.getElementById("cardSpread");
+const drawResult = document.getElementById("drawResult");
 
 const title = document.getElementById("title");
 const text = document.getElementById("text");
@@ -10,8 +17,22 @@ const log = document.getElementById("log");
 const commandArea = document.getElementById("commandArea");
 const commandInput = document.getElementById("commandInput");
 const commandBtn = document.getElementById("commandBtn");
+const selectedCard = document.getElementById("selectedCard");
 
 initPrinter(log);
+function createCardSpread() {
+  cardSpread.innerHTML = "";
+
+  for (let i = 0; i < 156; i++) {
+    const card = document.createElement("button");
+    card.className = "tarot-card";
+    card.style.setProperty("--i", i);
+    card.innerHTML = `<span></span>`;
+    cardSpread.appendChild(card);
+  }
+
+  cardSpread.classList.remove("hidden");
+}
 
 const worlds = ["폐쇄된 연구소", "심해 기지", "버려진 학교", "우주선", "지하 도시", "AI 서버"];
 const identities = ["실험체", "연구원", "침입자", "생존자", "기록 관리자", "이미 삭제된 사용자"];
@@ -30,44 +51,47 @@ function makeSeed() {
   return Math.floor(100000 + Math.random() * 900000);
 }
 
-startBtn.addEventListener("click", () => {
-  console.log("ENTER clicked");
+drawBtn.addEventListener("click", () => {
+  console.log("DRAW clicked");
 
-  const seed = makeSeed();
-  const seedEngine = createSeedEngine(seed);
-
-  const world = seedEngine.pick(worlds);
-  const identity = seedEngine.pick(identities);
-  const enemy = seedEngine.pick(enemies);
-  const goal = seedEngine.pick(goals);
-  const secret = seedEngine.pick(secrets);
-
-  title.textContent = "ARCHIVE OPENED";
-  text.textContent = `WORLD SEED: ${seed}`;
-  startBtn.style.display = "none";
-  log.classList.remove("hidden");
-
-  log.innerHTML = `
-    <p>> 위치: ${world}</p>
-    <p>> 사용자 분류: ${identity}</p>
-    <p>> 위협 요소: ${enemy}</p>
-    <p>> 목표: ${goal}</p>
-    <br />
-    <p class="glitch">숨겨진 기록을 복원 중...</p>
-  `;
+  drawBtn.disabled = true;
+  selectedCard.classList.remove("hidden");
 
   setTimeout(() => {
-    log.innerHTML += `
-      <br />
-      <p>> 복원된 문장:</p>
-      <p>"${secret}"</p>
-      <br />
-      <p>> 다음 명령을 기다리는 중...</p>
-    `;
+    console.log("CARD reveal");
+    selectedCard.classList.add("revealed");
+  }, 700);
 
-    commandArea.classList.remove("hidden");
-  }, 2500);
+  setTimeout(() => {
+    console.log("START world");
+    const result = drawTarotCard();
+    startWorldFromCard(result);
+  }, 2200);
 });
+
+function startWorldFromCard(result) {
+  const card = result.card;
+  const data = result.data;
+
+  tarotScreen.style.display = "none";
+  gameScreen.style.display = "block";
+  gameScreen.classList.remove("hidden");
+
+  title.textContent = data.title;
+  text.textContent = `${card.name} — ${data.orientationText}`;
+
+  log.innerHTML = `
+    <p>> 위치: ${data.world.location}</p>
+    <p>> 사용자 분류: ${data.world.identity}</p>
+    <p>> 위협 요소: ${data.world.threat}</p>
+    <p>> 목표: ${data.world.goal}</p>
+    <br />
+    ${data.opening.map((line) => `<p>${line}</p>`).join("")}
+    <br />
+    <p>> 다음 명령을 기다리는 중...</p>
+  `;
+}
+
 
 commandBtn.addEventListener("click", () => {
   handleCommand(commandInput.value);

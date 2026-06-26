@@ -20,7 +20,7 @@ export function handleCommand(command) {
     gameState.unknownWords.push(cleanCommand);
     gameState.fear += 1;
 
-    print("알 수 없는 명령어입니다.");
+    print(createDynamicResponse(parsed));
     print("하지만 시스템은 그 단어를 기억했습니다.");
   }
 }
