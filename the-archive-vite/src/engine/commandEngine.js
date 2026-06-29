@@ -1,3 +1,5 @@
+import { createSemanticResponse } from "./semanticResponse.js";
+import { getCurrentRoom } from "./roomEngine.js";
 import { parseCommand } from "./parser.js";
 import { gameState } from "./state.js";
 import { print } from "./printer.js";
@@ -29,7 +31,7 @@ export function handleCommand(command) {
     gameState.unknownWords.push(cleanCommand);
     gameState.fear += 1;
 
-    print(createDynamicResponse(parsed));
-    print("하지만 시스템은 그 단어를 기억했습니다.");
+    const room = getCurrentRoom();
+    print(createSemanticResponse(parsed, room));
   }
 }
