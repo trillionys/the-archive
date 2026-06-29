@@ -1,6 +1,6 @@
 import { gameState } from "../engine/state.js";
 import { print } from "../engine/printer.js";
-import { getCurrentRoom, moveTo } from "../engine/roomEngine.js";
+import { getCurrentRoom, moveTo, inspectObject } from "../engine/roomEngine.js";
 import {
   getItemsInCurrentRoom,
   takeItem,
@@ -119,5 +119,21 @@ export const commands = {
   open() {
     print("문을 열려면 방향으로 이동해 보라.");
     print("예: go east");
+  },
+
+  inspect(parsed) {
+  if (!parsed.object) {
+    print("무엇을 조사할까?");
+    return;
+  }
+
+  const result = inspectObject(parsed.object);
+
+  if (!result.success) {
+    print(result.message);
+    return;
+  }
+
+  result.lines.forEach((line) => print(line));
   },
 };

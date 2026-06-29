@@ -36,3 +36,20 @@ export function moveTo(direction) {
     room: getCurrentRoom(),
   };
 }
+
+export function inspectObject(objectName) {
+  const room = getCurrentRoom();
+  const lines = room.interactions?.[objectName];
+
+  if (!lines) {
+    return {
+      success: false,
+      message: `${objectName}을(를) 자세히 살펴봤지만 특별한 것은 없다.`,
+    };
+  }
+
+  return {
+    success: true,
+    lines,
+  };
+}
