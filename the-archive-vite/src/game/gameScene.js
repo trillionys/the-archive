@@ -1,3 +1,7 @@
+import { theWorldCommands } from "../worlds/theWorld/commands.js";
+import { gameState } from "../engine/state.js";
+import { loadItems } from "../engine/itemEngine.js";
+import { theWorldItems } from "../worlds/theWorld/items.js";
 import { loadRooms } from "../engine/roomEngine.js";
 import { theWorldRooms } from "../worlds/theWorld/rooms.js";
 import { applyTheme } from "../ui/theme.js";
@@ -9,6 +13,8 @@ export function startGameScene(result, elements) {
 
   applyTheme(card.theme);
   loadRooms(theWorldRooms);
+  loadItems(theWorldItems);
+  gameState.worldCommands = theWorldCommands;
 
   tarotScreen.style.display = "none";
   gameScreen.style.display = "block";

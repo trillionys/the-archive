@@ -1,46 +1,107 @@
-import { getCurrentRoom, moveTo } from "../engine/roomEngine.js";
 import { gameState } from "../engine/state.js";
 import { print } from "../engine/printer.js";
+import { getCurrentRoom, moveTo } from "../engine/roomEngine.js";
+import {
+  getItemsInCurrentRoom,
+  takeItem,
+  getInventoryItems,
+} from "../engine/itemEngine.js";
 
-export const commands = {
-  take(parsed) {
-  if (parsed.object !== "flashlight") {
-    print(`${parsed.object}은(는) 가져갈 수 없다.`);
-    return;
-  }
-
-  gameState.inventory.push("flashlight");
-  print("손전등을 획득했다.");
-},
-
-  help() {
-  print("사용 가능한 명령어:");
-  print("help");
-  print("look");
-  print("open");
-  print("remember");
-  print("status");
-  print("take");
-  },
-
-  look() {
-  const room = getCurrentRoom();
-
+function printRoom(room) {
   print(`[${room.name}]`);
   print(room.description);
 
+  const items = getItemsInCurrentRoom();
+
+  if (items.length > 0) {
+    print("보이는 물건:");
+    items.forEach((item) => {
+      print(`- ${item.name}`);
+    });
+  }
+
   const exits = Object.keys(room.exits).join(", ");
   print(`이동 가능: ${exits}`);
+}
+
+function runRoomEvent(room, eventName) {
+  const eventText = room.events?.[eventName];
+
+  if (!eventText) return;
+
+  const eventKey = `${room.id}:${eventName}`;
+
+  if (gameState.seenEvents[eventKey]) return;
+
+  print(eventText);
+  gameState.seenEvents[eventKey] = true;
+}
+
+export const commands = {
+  help() {
+    print("사용 가능한 명령어:");
+    print("help");
+    print("look");
+    print("go north / go south / go east / go west");
+    print("take brass key");
+    print("inventory");
+    print("status");
+    print("remember");
   },
 
-  open() {
-    print("문을 열었다.");
-    print("하지만 열린 것은 문이 아니라, 또 다른 기록이었다.");
+  look() {
+    const room = getCurrentRoom();
+
+    printRoom(room);
+    runRoomEvent(room, "firstLook");
   },
 
-  remember() {
-    print("기억 복구 중...");
-    print("실패. 원인: 사용자가 존재하지 않음.");
+  go(parsed) {
+    if (!parsed.object) {
+      print("어느 방향으로 이동할까?");
+      return;
+    }
+
+    const result = moveTo(parsed.object);
+
+    if (!result.success) {
+      print(result.message);
+      return;
+    }
+
+    printRoom(result.room);
+    runRoomEvent(result.room, "enter");
+  },
+
+  take(parsed) {
+    if (!parsed.object) {
+      print("무엇을 가져갈까?");
+      return;
+    }
+
+    const result = takeItem(parsed.object);
+
+    if (!result.success) {
+      print(result.message);
+      return;
+    }
+
+    print(`${result.item.name}을(를) 획득했다.`);
+  },
+
+  inventory() {
+    const items = getInventoryItems();
+
+    if (items.length === 0) {
+      print("인벤토리가 비어 있다.");
+      return;
+    }
+
+    print("=== INVENTORY ===");
+
+    items.forEach((item) => {
+      print(`- ${item.name}`);
+    });
   },
 
   status() {
@@ -50,19 +111,13 @@ export const commands = {
     print(`COMMANDS: ${gameState.commandCount}`);
   },
 
-  go(parsed) {
-  const direction = parsed.object;
-  const result = moveTo(direction);
+  remember() {
+    print("기억 복구 중...");
+    print("실패. 원인: 사용자가 존재하지 않음.");
+  },
 
-  if (!result.success) {
-    print(result.message);
-    return;
-  }
-
-  print(`[${result.room.name}]`);
-  print(result.room.description);
-
-  const exits = Object.keys(result.room.exits).join(", ");
-  print(`이동 가능: ${exits}`);
+  open() {
+    print("문을 열려면 방향으로 이동해 보라.");
+    print("예: go east");
   },
 };

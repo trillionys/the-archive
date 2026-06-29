@@ -15,6 +15,15 @@ export function handleCommand(command) {
   gameState.commandCount++;
 
   if (commands[cleanCommand]) {
+    if (gameState.worldCommands[cleanCommand]) {
+  const lines = gameState.worldCommands[cleanCommand](parsed);
+
+  lines.forEach((line) => {
+    print(line);
+  });
+
+  return;
+  }
     commands[cleanCommand](parsed);
   } else {
     gameState.unknownWords.push(cleanCommand);

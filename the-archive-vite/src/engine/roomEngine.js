@@ -1,4 +1,5 @@
 import { gameState } from "./state.js";
+import { hasItem } from "./itemEngine.js";
 
 export function loadRooms(rooms) {
   gameState.rooms = rooms;
@@ -19,11 +20,19 @@ export function moveTo(direction) {
     };
   }
 
+  const nextRoom = gameState.rooms[nextRoomId];
+
+  if (nextRoom.locked && !hasItem(nextRoom.requiredItem)) {
+    return {
+      success: false,
+      message: "문이 잠겨 있다. 원형 문양의 열쇠가 필요하다.",
+    };
+  }
+
   gameState.currentRoomId = nextRoomId;
-  const nextRoom = getCurrentRoom();
 
   return {
     success: true,
-    room: nextRoom,
+    room: getCurrentRoom(),
   };
 }

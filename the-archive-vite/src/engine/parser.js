@@ -1,8 +1,21 @@
 export function parseCommand(input) {
-  const parts = input.trim().toLowerCase().split(/\s+/);
+  const cleanInput = input.trim().toLowerCase();
+  const parts = cleanInput.split(/\s+/);
+
+  const verb = parts[0] || "";
+  let object = parts.slice(1).join(" ");
+
+  if (object.startsWith("at ")) {
+    object = object.slice(3);
+  }
+
+  if (object.startsWith("to ")) {
+    object = object.slice(3);
+  }
 
   return {
-    verb: parts[0] || "",
-    object: parts.slice(1).join(" "),
+    raw: cleanInput,
+    verb,
+    object,
   };
 }

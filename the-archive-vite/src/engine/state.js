@@ -7,4 +7,7 @@ export const gameState = {
   inventory: [],
   currentRoomId: "archiveHall",
   rooms: {},
+  items: {},
+  seenEvents: {},
+  worldCommands: {},
 };
